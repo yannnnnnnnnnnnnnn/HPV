@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Poppins', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-blue: #2563EB;
+  --color-blue-dim: #1D4ED8;
+  --color-blue-soft: #EFF4FF;
+
+  --color-navy: #0F172A;
+  --color-navy-soft: #16213A;
+
+  --color-graybg: #F8FAFC;
+  --color-line: #E2E8F0;
+  --color-muted: #5B6472;
+  --color-softtext: #8A93A3;
+
+  --radius-default: 14px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
