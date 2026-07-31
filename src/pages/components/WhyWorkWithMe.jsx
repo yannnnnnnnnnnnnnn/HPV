@@ -39,7 +39,6 @@ const WhyWorkWithMe = () => {
   return (
     <section id="why" ref={sectionRef} className="bg-[#F8FAFC] py-[104px]">
       <div className="max-w-[1180px] mx-auto px-8">
-        {/* Section head */}
         <div
           className={`max-w-[640px] mx-auto mb-14 text-center transition-all duration-700 ease-out ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
@@ -57,7 +56,6 @@ const WhyWorkWithMe = () => {
           </h2>
         </div>
 
-        {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {reasons.map((reason, i) => {
             const Icon = reason.icon

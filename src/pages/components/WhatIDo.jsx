@@ -107,7 +107,6 @@ useEffect(() => {
           </p>
         </div>
 
-        {/* Cards grid — reveals one-by-one on scroll */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {services.map((service, i) => {
             const Icon = service.icon
@@ -128,13 +127,11 @@ useEffect(() => {
                   transitionDelay: visible ? `${i * 120}ms` : '0ms',
                 }}
               >
-                {/* Top gradient accent bar — appears on hover */}
+
                 <div
                   className={`absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r ${service.accent} rounded-full opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300`}
                   aria-hidden="true"
                 />
-
-                {/* Corner arrow — subtle affordance */}
                 <ArrowUpRight
                   size={16}
                   strokeWidth={2.2}
@@ -142,7 +139,6 @@ useEffect(() => {
                   aria-hidden="true"
                 />
 
-                {/* Icon */}
                 <div className="relative w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:bg-blue-600 group-hover:text-white group-hover:scale-105">
                   <Icon size={20} strokeWidth={2} />
                 </div>

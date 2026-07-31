@@ -86,7 +86,6 @@ const Skills = () => {
   return (
     <section id="skills" className="py-[104px]">
       <div className="max-w-[1180px] mx-auto px-8">
-        {/* Section head */}
         <div className="max-w-[640px] mx-auto mb-14 text-center animate-fade-in-up">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="w-8 h-px bg-blue-600" />
@@ -100,9 +99,7 @@ const Skills = () => {
           </h2>
         </div>
 
-{/* Skills grid */}
 <div className="space-y-5.5">
-  {/* Row 1 — first 3 categories */}
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5.5">
     {skillGroups.slice(0, 3).map((group, i) => {
       const Icon = group.icon
@@ -139,7 +136,6 @@ const Skills = () => {
     })}
   </div>
 
-  {/* Row 2 — last 2 categories, centered */}
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:w-2/3 lg:mx-auto gap-5.5">
     {skillGroups.slice(3).map((group, i) => {
       const Icon = group.icon

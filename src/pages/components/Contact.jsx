@@ -6,7 +6,6 @@ const Contact = () => {
       id="contact"
       className="relative overflow-hidden bg-slate-900 text-white text-center py-[104px]"
     >
-      {/* Radial gradient glow */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
@@ -26,7 +25,7 @@ const Contact = () => {
 </div>
 
         <h2 className="font-poppins tracking-[-0.02em] text-white text-[clamp(1.9rem,3.4vw,2.6rem)] mt-4 mb-4">
-          Let's build something great together
+          LET'S BUILD SOMETHING GREAT TOGETHER
         </h2>
 
         <p className="text-[#B8C2D6] max-w-[520px] mx-auto mb-11 text-[1.02rem]">
@@ -35,7 +34,7 @@ const Contact = () => {
 
         <div className="flex justify-center gap-4.5 flex-wrap">
           <a
-            href="vinohadrian@gmail.com"
+            href="mailto:vinohadrian@gmail.com"
             className="flex items-center gap-2.5 bg-white/[0.06] border border-white/[0.14] px-6.5 py-3.5 rounded-[10px] font-semibold text-[0.95rem] text-inherit no-underline transition-all duration-200 hover:bg-white/[0.12] hover:-translate-y-0.5"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

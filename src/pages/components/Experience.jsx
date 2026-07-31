@@ -50,8 +50,6 @@ const Experience = () => {
   return (
     <section id="experience" ref={sectionRef} className="bg-[#F8FAFC] py-[104px]">
       <div className="max-w-[1180px] mx-auto px-8">
-
-        {/* Section Heading */}
         <div
           className={`max-w-[640px] mx-auto mb-14 text-center transition-all duration-700 ease-out ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
@@ -71,8 +69,6 @@ const Experience = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-12 items-start">
-
-          {/* Left Card */}
           <div
             className={`lg:sticky lg:top-24 transition-all duration-700 ease-out ${
               visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -144,8 +140,6 @@ const Experience = () => {
             </div>
 
           </div>
-
-          {/* Right Side */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             {responsibilities.map((item, index) => (
