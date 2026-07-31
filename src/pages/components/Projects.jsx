@@ -419,12 +419,7 @@ const Projects = () => {
           <h2 className="font-display tracking-[-0.025em] text-[clamp(1.6rem,5vw,2.4rem)] font-bold text-slate-900 mb-3 sm:mb-4 leading-[1.15]">
             Selected work
           </h2>
-          <p className="text-[#5B6472] text-[0.92rem] sm:text-[1rem] leading-relaxed max-w-[520px] mx-auto px-2 sm:px-0">
-            A curated set of production-grade systems spanning agriculture, IoT,
-            AI-driven commerce, and enterprise tooling.
-          </p>
         </div>
-
         <div className="flex flex-col gap-5 sm:gap-6 md:gap-7">
           {projects.map((project, i) => {
             const isEven = i % 2 === 1
