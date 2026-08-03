@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Briefcase, Code2, Server, Database, Smartphone, Rocket, Sparkles } from 'lucide-react'
 
 const quickFacts = [
@@ -11,6 +11,38 @@ const quickFacts = [
 ]
 
 const About = () => {
+  const [activeIndex, setActiveIndex] = useState(null)
+  const cardRef = useRef(null)
+
+  useEffect(() => {
+    const isTouchDevice = window.matchMedia('(hover: none)').matches
+    if (!isTouchDevice) return
+
+    let interval
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setActiveIndex(0)
+          interval = setInterval(() => {
+            setActiveIndex((prev) => (prev === null ? 0 : (prev + 1) % quickFacts.length))
+          }, 1600)
+        } else {
+          clearInterval(interval)
+          setActiveIndex(null)
+        }
+      },
+      { threshold: 0.4 }
+    )
+
+    if (cardRef.current) observer.observe(cardRef.current)
+
+    return () => {
+      clearInterval(interval)
+      observer.disconnect()
+    }
+  }, [])
+
   return (
     <section id="about" className="relative py-16 sm:py-20 lg:py-[104px] bg-white overflow-hidden">
       <div
@@ -41,7 +73,10 @@ const About = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-8 lg:gap-16 items-start">
-          <div className="relative bg-gradient-to-br from-white to-slate-50/70 border border-slate-200 rounded-2xl p-6 sm:p-7 lg:p-8 shadow-[0_1px_3px_rgba(15,23,42,0.04)] animate-fade-in-up [animation-delay:150ms] transition-all duration-300 hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)] hover:-translate-y-1">
+          <div
+            ref={cardRef}
+            className="relative bg-gradient-to-br from-white to-slate-50/70 border border-slate-200 rounded-2xl p-6 sm:p-7 lg:p-8 shadow-[0_1px_3px_rgba(15,23,42,0.04)] animate-fade-in-up [animation-delay:150ms] transition-all duration-300 hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)] hover:-translate-y-1"
+          >
             <div className="absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r from-transparent via-blue-600 to-transparent rounded-full" />
 
             <h3 className="font-display tracking-[-0.02em] text-[1rem] sm:text-[1.05rem] text-slate-900 mb-5 flex items-center gap-2">
@@ -51,20 +86,33 @@ const About = () => {
             <div className="flex flex-col gap-1">
               {quickFacts.map((fact, i) => {
                 const Icon = fact.icon
+                const isActive = activeIndex === i
                 return (
                   <div
                     key={fact.label}
-                    className="group flex items-center justify-between gap-3 py-3 px-3 -mx-3 rounded-xl border-l-2 border-transparent transition-all duration-200 hover:bg-slate-50 hover:border-l-blue-600 hover:translate-x-1 focus-within:bg-slate-50 focus-within:border-l-blue-600 animate-fade-in-up"
+                    className={`group flex items-center justify-between gap-3 py-3 px-3 -mx-3 rounded-xl border-l-2 transition-all duration-300 hover:bg-slate-50 hover:border-l-blue-600 hover:translate-x-1 focus-within:bg-slate-50 focus-within:border-l-blue-600 animate-fade-in-up ${
+                      isActive
+                        ? 'bg-slate-50 border-l-blue-600 translate-x-1'
+                        : 'border-l-transparent'
+                    }`}
                     style={{ animationDelay: `${220 + i * 50}ms` }}
                     tabIndex={0}
                   >
                     <span className="flex items-center gap-2.5 text-[0.86rem] sm:text-[0.9rem] text-slate-600">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 shrink-0 transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white group-hover:scale-105 group-focus-within:bg-blue-600 group-focus-within:text-white">
+                      <span
+                        className={`flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 shrink-0 transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white group-hover:scale-105 group-focus-within:bg-blue-600 group-focus-within:text-white ${
+                          isActive ? 'bg-blue-600 text-white scale-105' : ''
+                        }`}
+                      >
                         <Icon size={15} strokeWidth={2.2} />
                       </span>
                       {fact.label}
                     </span>
-                    <span className="font-semibold text-slate-900 text-[0.86rem] sm:text-[0.92rem] text-right transition-colors duration-200 group-hover:text-blue-600">
+                    <span
+                      className={`font-semibold text-slate-900 text-[0.86rem] sm:text-[0.92rem] text-right transition-colors duration-200 group-hover:text-blue-600 ${
+                        isActive ? 'text-blue-600' : ''
+                      }`}
+                    >
                       {fact.value}
                     </span>
                   </div>

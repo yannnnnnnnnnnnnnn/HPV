@@ -43,33 +43,58 @@ const services = [
 const WhatIDo = () => {
   const sectionRef = useRef(null)
   const [visible, setVisible] = useState(false)
-useEffect(() => {
-  const el = sectionRef.current
-  if (!el) return
 
-  const isMobile = window.innerWidth < 640 
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) {
-        setVisible(true)
-        observer.disconnect()
+  const [activeIndex, setActiveIndex] = useState(null)
+  const cardRefs = useRef([])
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+
+    const isMobile = window.innerWidth < 640
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      {
+        threshold: 0.15,
+        rootMargin: isMobile
+          ? '0px 0px -350px 0px'
+          : '0px 0px -350px 0px',
       }
-    },
-    {
-      threshold: 0.15,
-      rootMargin: isMobile
-        ? '0px 0px -350px 0px'
-        : '0px 0px -350px 0px',
+    )
+
+    const raf = requestAnimationFrame(() => observer.observe(el))
+
+    return () => {
+      cancelAnimationFrame(raf)
+      observer.disconnect()
     }
-  )
+  }, [])
 
-  const raf = requestAnimationFrame(() => observer.observe(el))
+  useEffect(() => {
+    const isTouchDevice = window.matchMedia('(hover: none)').matches
+    if (!isTouchDevice) return
 
-  return () => {
-    cancelAnimationFrame(raf)
-    observer.disconnect()
-  }
-}, [])
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.dataset.index)
+            setActiveIndex(index)
+          }
+        })
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    )
+
+    cardRefs.current.forEach((card) => card && observer.observe(card))
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <section
@@ -110,11 +135,14 @@ useEffect(() => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {services.map((service, i) => {
             const Icon = service.icon
+            const isActive = activeIndex === i
             return (
               <article
                 key={service.title}
+                ref={(el) => (cardRefs.current[i] = el)}
+                data-index={i}
                 tabIndex={0}
-                className={`group relative bg-gradient-to-br from-white to-slate-50/60 border border-slate-200 rounded-2xl p-6 sm:p-7 cursor-pointer overflow-hidden
+                className={`group relative bg-gradient-to-br from-white to-slate-50/60 border rounded-2xl p-6 sm:p-7 cursor-pointer overflow-hidden
                   transition-all duration-500 ease-out
                   hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-15px_rgba(15,23,42,0.15)] hover:border-blue-300
                   focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2
@@ -122,6 +150,11 @@ useEffect(() => {
                     visible
                       ? 'opacity-100 translate-y-0'
                       : 'opacity-0 translate-y-6'
+                  }
+                  ${
+                    isActive
+                      ? '-translate-y-1.5 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.15)] border-blue-300'
+                      : 'border-slate-200'
                   }`}
                 style={{
                   transitionDelay: visible ? `${i * 120}ms` : '0ms',
@@ -129,21 +162,33 @@ useEffect(() => {
               >
 
                 <div
-                  className={`absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r ${service.accent} rounded-full opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300`}
+                  className={`absolute top-0 left-6 right-6 h-0.5 bg-gradient-to-r ${service.accent} rounded-full opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300 ${
+                    isActive ? 'opacity-100' : ''
+                  }`}
                   aria-hidden="true"
                 />
                 <ArrowUpRight
                   size={16}
                   strokeWidth={2.2}
-                  className="absolute top-5 right-5 text-slate-300 transition-all duration-300 group-hover:text-blue-600 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  className={`absolute top-5 right-5 text-slate-300 transition-all duration-300 group-hover:text-blue-600 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 ${
+                    isActive ? 'text-blue-600 -translate-y-0.5 translate-x-0.5' : ''
+                  }`}
                   aria-hidden="true"
                 />
 
-                <div className="relative w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:bg-blue-600 group-hover:text-white group-hover:scale-105">
+                <div
+                  className={`relative w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:bg-blue-600 group-hover:text-white group-hover:scale-105 ${
+                    isActive ? 'bg-blue-600 text-white scale-105' : ''
+                  }`}
+                >
                   <Icon size={20} strokeWidth={2} />
                 </div>
 
-                <h3 className="font-display tracking-[-0.02em] text-[1.05rem] sm:text-[1.1rem] text-slate-900 mb-2 transition-colors duration-200 group-hover:text-blue-600">
+                <h3
+                  className={`font-display tracking-[-0.02em] text-[1.05rem] sm:text-[1.1rem] text-slate-900 mb-2 transition-colors duration-200 group-hover:text-blue-600 ${
+                    isActive ? 'text-blue-600' : ''
+                  }`}
+                >
                   {service.title}
                 </h3>
                 <p className="text-slate-600 text-[0.92rem] sm:text-[0.95rem] leading-relaxed">

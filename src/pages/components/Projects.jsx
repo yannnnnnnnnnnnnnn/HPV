@@ -167,9 +167,6 @@ const particles = [
   { top: '10%', left: '52%', size: 2, dur: '4.4s', delay: '1.6s' },
 ]
 
-// Used only to tone down the *decorative* extras (glows, particles, satellites,
-// dashed connector lines). The core pulse rings + floating icon badge are
-// intentionally excluded from this so they always keep looping.
 const useReducedMotion = () => {
   const [reduced, setReduced] = useState(false)
   useEffect(() => {
@@ -182,7 +179,8 @@ const useReducedMotion = () => {
   return reduced
 }
 
-const ProjectVisual = ({ title, label, accent, flipEven, active }) => {
+
+const ProjectVisual = ({ title, label, accent, flipEven, active, spotlight }) => {
   const cfg = illustrations[title]
   const reduced = useReducedMotion()
   if (!cfg) return null
@@ -215,12 +213,16 @@ const ProjectVisual = ({ title, label, accent, flipEven, active }) => {
 
       <div
         aria-hidden="true"
-        className={`absolute -top-10 -left-8 w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 rounded-full blur-3xl ${cfg.glowA} transition-transform duration-700 ease-out group-hover:scale-110`}
+        className={`absolute -top-10 -left-8 w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 rounded-full blur-3xl ${cfg.glowA} transition-transform duration-700 ease-out group-hover:scale-110 ${
+          spotlight ? 'scale-110' : ''
+        }`}
         style={reduced ? undefined : { animation: 'pv-drift-a 9s ease-in-out infinite' }}
       />
       <div
         aria-hidden="true"
-        className={`absolute -bottom-12 -right-6 w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-full blur-3xl ${cfg.glowB} transition-transform duration-700 ease-out group-hover:scale-110`}
+        className={`absolute -bottom-12 -right-6 w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-full blur-3xl ${cfg.glowB} transition-transform duration-700 ease-out group-hover:scale-110 ${
+          spotlight ? 'scale-110' : ''
+        }`}
         style={reduced ? undefined : { animation: 'pv-drift-b 11s ease-in-out infinite' }}
       />
       <div
@@ -300,7 +302,9 @@ const ProjectVisual = ({ title, label, accent, flipEven, active }) => {
 
         {/* Floating icon badge — always loops too */}
         <div
-          className={`relative z-10 flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-2xl sm:rounded-3xl bg-white/[0.07] backdrop-blur-xl border border-white/[0.14] shadow-[0_10px_40px_rgba(0,0,0,0.4)] ring-1 ${cfg.ring} transition-all duration-500 ease-out group-hover:scale-105 group-hover:-rotate-3`}
+          className={`relative z-10 flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-2xl sm:rounded-3xl bg-white/[0.07] backdrop-blur-xl border border-white/[0.14] shadow-[0_10px_40px_rgba(0,0,0,0.4)] ring-1 ${cfg.ring} transition-all duration-500 ease-out group-hover:scale-105 group-hover:-rotate-3 ${
+            spotlight ? 'scale-105 -rotate-3' : ''
+          }`}
           style={{ animation: 'pv-float-y 5s ease-in-out infinite' }}
         >
           <Primary
@@ -314,7 +318,9 @@ const ProjectVisual = ({ title, label, accent, flipEven, active }) => {
         {cfg.satellites.map(({ Icon, pos, color, dur, delay }, i) => (
           <div
             key={i}
-            className={`absolute ${pos} z-10 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-white/[0.07] backdrop-blur-lg border border-white/[0.14] shadow-lg transition-transform duration-500 ease-out group-hover:scale-110`}
+            className={`absolute ${pos} z-10 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-white/[0.07] backdrop-blur-lg border border-white/[0.14] shadow-lg transition-transform duration-500 ease-out group-hover:scale-110 ${
+              spotlight ? 'scale-110' : ''
+            }`}
             style={floatStyle(dur, delay)}
           >
             <Icon
@@ -328,7 +334,9 @@ const ProjectVisual = ({ title, label, accent, flipEven, active }) => {
       </div>
 
       <div
-        className={`absolute bottom-3 sm:bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/[0.09] backdrop-blur-xl border border-white/[0.14] shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition-transform duration-300 group-hover:scale-105 max-w-[calc(100%-1.5rem)]`}
+        className={`absolute bottom-3 sm:bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/[0.09] backdrop-blur-xl border border-white/[0.14] shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition-transform duration-300 group-hover:scale-105 max-w-[calc(100%-1.5rem)] ${
+          spotlight ? 'scale-105' : ''
+        }`}
       >
         <span className={`w-1.5 h-1.5 rounded-full ${cfg.accentDot} shadow-[0_0_8px_currentColor] shrink-0`} />
         <span className="font-display font-semibold text-[0.78rem] sm:text-[0.86rem] text-white tracking-[-0.01em] truncate">
@@ -343,6 +351,10 @@ const Projects = () => {
   const sectionRef = useRef(null)
   const [visible, setVisible] = useState(false)
   const reduced = useReducedMotion()
+
+
+  const [activeIndex, setActiveIndex] = useState(null)
+  const cardRefs = useRef([])
 
   useEffect(() => {
     const el = sectionRef.current
@@ -364,6 +376,27 @@ const Projects = () => {
       cancelAnimationFrame(raf)
       observer.disconnect()
     }
+  }, [])
+
+  useEffect(() => {
+    const isTouchDevice = window.matchMedia('(hover: none)').matches
+    if (!isTouchDevice) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.dataset.index)
+            setActiveIndex(index)
+          }
+        })
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    )
+
+    cardRefs.current.forEach((card) => card && observer.observe(card))
+
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -423,11 +456,18 @@ const Projects = () => {
         <div className="flex flex-col gap-5 sm:gap-6 md:gap-7">
           {projects.map((project, i) => {
             const isEven = i % 2 === 1
+            const isSpotlit = activeIndex === i
             return (
               <div
                 key={project.title}
-                className={`group relative bg-gradient-to-br from-white to-slate-50/60 border border-[#E2E8F0] rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 items-stretch transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-[0_28px_56px_-18px_rgba(15,23,42,0.22)] hover:border-blue-300 ${
+                ref={(el) => (cardRefs.current[i] = el)}
+                data-index={i}
+                className={`group relative bg-gradient-to-br from-white to-slate-50/60 border rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 items-stretch transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-[0_28px_56px_-18px_rgba(15,23,42,0.22)] hover:border-blue-300 ${
                   visible || reduced ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                } ${
+                  isSpotlit
+                    ? '-translate-y-1.5 shadow-[0_28px_56px_-18px_rgba(15,23,42,0.22)] border-blue-300'
+                    : 'border-[#E2E8F0]'
                 }`}
                 style={{
                   transitionDelay: visible || reduced ? `${i * 120}ms` : '0ms',
@@ -435,13 +475,17 @@ const Projects = () => {
                 }}
               >
                 <div
-                  className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r ${project.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                  className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r ${project.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                    isSpotlit ? 'opacity-100' : ''
+                  }`}
                   aria-hidden="true"
                 />
 
                 <div
                   aria-hidden="true"
-                  className={`absolute -top-24 -right-24 w-64 h-64 rounded-full bg-gradient-to-br ${project.accent} opacity-0 group-hover:opacity-[0.06] blur-2xl transition-opacity duration-500`}
+                  className={`absolute -top-24 -right-24 w-64 h-64 rounded-full bg-gradient-to-br ${project.accent} opacity-0 group-hover:opacity-[0.06] blur-2xl transition-opacity duration-500 ${
+                    isSpotlit ? 'opacity-[0.06]' : ''
+                  }`}
                 />
 
                 <div
@@ -466,7 +510,11 @@ const Projects = () => {
                       style={{ animation: 'pv-title-pulse 2.4s ease-in-out infinite' }}
                       aria-hidden="true"
                     />
-                    <span className="transition-transform duration-300 group-hover:translate-x-0.5">
+                    <span
+                      className={`transition-transform duration-300 group-hover:translate-x-0.5 ${
+                        isSpotlit ? 'translate-x-0.5' : ''
+                      }`}
+                    >
                       {project.title}
                     </span>
                   </h3>
@@ -502,6 +550,7 @@ const Projects = () => {
                     accent={project.accent}
                     flipEven={isEven}
                     active={visible || reduced}
+                    spotlight={isSpotlit}
                   />
                 </div>
               </div>
